@@ -1,38 +1,52 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
-	kotlin("jvm") version "1.7.0"
-	kotlin("plugin.serialization") version "1.7.0"
+    kotlin("multiplatform") version "2.1.10"
+    kotlin("plugin.serialization") version "2.1.10"
 }
 
 group = "kotlin.nmea"
 version = "0.11.1-SNAPSHOT"
-java.sourceCompatibility = JavaVersion.VERSION_11
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
-dependencies {
-	implementation("org.jetbrains.kotlin:kotlin-stdlib")
-	implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3")
-	implementation("com.neuronrobotics:nrjavaserial:5.2.1")
+kotlin {
+    jvm {
+        compilations.all {
+            kotlinOptions.jvmTarget = "17"
+        }
+    }
+    
+    iosX64()
+    iosArm64()
+    iosSimulatorArm64()
 
-	testImplementation("junit:junit:4.13.2")
-	testRuntimeOnly("org.junit.vintage:junit-vintage-engine:4.12.2")
+    sourceSets {
+        val commonMain by getting {
+            dependencies {
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+                implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.1")
+                implementation("com.squareup.okio:okio:3.9.0")
+                implementation("co.touchlab:stately-concurrent-collections:2.0.7")
+            }
+        }
+        val commonTest by getting {
+            dependencies {
+                implementation(kotlin("test"))
+            }
+        }
+        val jvmMain by getting {
+            dependencies {
+                implementation("com.neuronrobotics:nrjavaserial:5.2.1")
+            }
+        }
+        val jvmTest by getting {
+            dependencies {
+                implementation(kotlin("test-junit"))
+                implementation("junit:junit:4.13.2")
+                runtimeOnly("org.junit.vintage:junit-vintage-engine:4.12.2")
+            }
+        }
+    }
 }
-
-tasks.withType<KotlinCompile> {
-	kotlinOptions {
-		freeCompilerArgs = listOf("-Xjsr305=strict", "-opt-in=kotlin.RequiresOptIn")
-		jvmTarget = "11"
-	}
-}
-
-tasks.test {
-	useJUnitPlatform()
-	testLogging {
-		events("passed", "skipped", "failed")
-	}
-}
-
