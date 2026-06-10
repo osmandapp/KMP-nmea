@@ -61,7 +61,7 @@ class Sixbit(payload: String?, fillBits: Int) {
     private fun convert(value: Int, from: Int, length: Int) {
         var value1 = value
         var length1 = length
-        var index = from + BITS_PER_CHAR
+        var index = from + BITS_PER_CHAR - 1
         while (value1.toLong() != 0L && length1 > 0) {
             if (value1 % 2L != 0L) fBitVector.set(index)
             index--

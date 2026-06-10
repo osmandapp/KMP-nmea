@@ -61,16 +61,12 @@ class BitVector {
     /**
      * Gets a vector subset.
      *
-     * @param from Start index
-     * @param to End index
+     * @param from Start index (inclusive)
+     * @param to End index (exclusive)
      * @return BitVector with specified range
      */
     operator fun get(from: Int, to: Int): BitVector {
-        var from1 = from
-        var to1 = to
-        to1++
-        from1++
-        val slice = fBitVector.copyOfRange(from1, to1)
+        val slice = fBitVector.copyOfRange(from, to)
         return BitVector(slice)
     }
 
@@ -97,15 +93,16 @@ class BitVector {
      * Returns the requested bits interpreted as an integer (MSB first) from the message.
      *
      * @param from begin index (inclusive)
-     * @param to end index (inclusive)
+     * @param to end index (exclusive)
      * @return unsigned int value
      */
     fun getUInt(from: Int, to: Int): Int {
         var value = 0
-        var i = previousSetBit(to)
-        while (i > from) {
-            value += (1 shl (to - i))
-            i = previousSetBit(i - 1)
+        val l = to - from
+        for (i in 0 until l) {
+            if (getBoolean(from + i)) {
+                value += (1 shl (l - i - 1))
+            }
         }
         return value
     }
