@@ -24,11 +24,11 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
                 implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.1")
                 implementation("com.squareup.okio:okio:3.9.0")
-                implementation("co.touchlab:stately-concurrent-collections:2.0.7")
+                implementation("co.touchlab:stately-concurrent-collections:2.1.0")
             }
         }
         val commonTest by getting {
