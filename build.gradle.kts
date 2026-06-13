@@ -1,6 +1,7 @@
 plugins {
     kotlin("multiplatform") version "2.1.10"
     kotlin("plugin.serialization") version "2.1.10"
+    id("ivy-publish")
 }
 
 group = "kotlin.nmea"
@@ -36,16 +37,34 @@ kotlin {
                 implementation(kotlin("test"))
             }
         }
-        val jvmMain by getting {
-            dependencies {
-                implementation("com.neuronrobotics:nrjavaserial:5.2.1")
-            }
-        }
+
         val jvmTest by getting {
             dependencies {
                 implementation(kotlin("test-junit"))
                 implementation("junit:junit:4.13.2")
                 runtimeOnly("org.junit.vintage:junit-vintage-engine:4.12.2")
+            }
+        }
+    }
+}
+
+publishing {
+    repositories {
+        ivy {
+            url = uri(System.getenv("OSMAND_BINARIES_IVY_ROOT") ?: "./")
+        }
+    }
+    publications {
+        create<IvyPublication>("ivyKmpNmeaJvm") {
+            organisation = project.group.toString()
+            module = "kmp-nmea"
+            revision = project.version.toString()
+            artifact(tasks.named("jvmJar")) {
+                type = "jar"
+            }
+            artifact(tasks.named("jvmSourcesJar")) {
+                type = "jar"
+                classifier = "sources"
             }
         }
     }
